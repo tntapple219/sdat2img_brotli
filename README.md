@@ -2,22 +2,27 @@
 
 This Python script extracts and converts Android OTA update files—specifically `.dat.br` and `.transfer.list`—into a usable `.img` disk image. This is especially useful for unpacking `system`, `vendor`, or `product` partitions from A/B OTA packages.
 
+---
+
 ## ✅ Features
 
 * ✔️ Supports `.dat.br` files (Brotli compressed)
 * ✔️ Converts `.dat` + `.transfer.list` into a flashable `.img`
 * ✔️ Automatic decompression and cleanup
-* ✔️ No command-line arguments needed
+* ✔️ **Flexible input/output paths via command-line arguments (CLI)**
+* ✔️ **Defaults to current directory files if no arguments are provided**
 * ✔️ User-friendly logs and error messages
+
+---
 
 ## 📂 Input Files
 
-Place the following files in the same directory as the script:
+Place the following files in the same directory as the script, or specify their paths using **command-line arguments**:
 
-* `system.new.dat.br`
-* `system.transfer.list`
+* `system.new.dat.br` (Default)
+* `system.transfer.list` (Default)
 
-> You can also rename the script variables to process other partitions like `vendor` or `product`.
+---
 
 ## 🧰 Requirements
 
@@ -30,43 +35,81 @@ Install Brotli using pip:
 pip install brotli
 ```
 
+---
+
 ## 🚀 Usage
 
-Simply run the script:
+This script offers **two convenient ways** to run it:
+
+### 1. Simple Run (Using Default Files)
+
+If your `system.new.dat.br` and `system.transfer.list` files are in the same directory as the script, just run:
 
 ```bash
 python sdat2img_brotli.py
 ```
 
-The script performs two main steps:
+The script will automatically:
+1.  Decompress `system.new.dat.br` into `system.new.dat`
+2.  Convert `system.new.dat` and `system.transfer.list` into `system.img`
 
-1. Decompresses `system.new.dat.br` into `system.new.dat`
-2. Converts `.dat` and `.transfer.list` into `system.img`
+### 2. Advanced Run (Using Command-Line Arguments)
+
+For more flexibility, you can specify the paths and output filename using arguments:
+
+```bash
+python sdat2img_brotli.py -d <path_to_dat_br_file> -t <path_to_transfer_list_file> -o <output_img_name>
+```
+
+**Arguments:**
+
+* `-d` or `--datbr`: Specifies the path to the `.dat.br` file (e.g., `"C:\roms\vendor.new.dat.br"`)
+* `-t` or `--transferlist`: Specifies the path to the `.transfer.list` file (e.g., `"C:\roms\vendor.transfer.list"`)
+* `-o` or `--outputimg`: Specifies the name and path for the output `.img` file (e.g., `"extracted_vendor.img"`)
+
+**Examples:**
+
+* **Convert a `vendor` partition located in a specific folder:**
+    ```bash
+    python sdat2img_brotli.py -d "D:\OTA\vendor.new.dat.br" -t "D:\OTA\vendor.transfer.list" -o "vendor.img"
+    ```
+* **Generate an `img` with a custom name in the current directory:**
+    ```bash
+    python sdat2img_brotli.py -o "my_custom_system.img"
+    ```
+* **Get help and see all options:**
+    ```bash
+    python sdat2img_brotli.py --help
+    ```
+
+---
 
 ## 👥 Output
 
-* ✅ `system.img` — a raw disk image that can be opened with tools like:
+* ✅ A `.img` file (e.g., `system.img`, `vendor.img`) — a raw disk image that can be opened with tools like:
 
-  * 7-Zip
-  * DiskGenius
-  * Linux Reader (for Windows)
-  * ext4 tools on Linux
+    * 7-Zip
+    * DiskGenius
+    * Linux Reader (for Windows)
+    * ext4 tools on Linux
+
+---
 
 ## 🛠 Customization
 
-To convert a different partition (e.g. `vendor`), modify the following variables at the top of the script:
+With the addition of command-line arguments, you no longer need to modify the script directly for different partitions! Simply use the `-d`, `-t`, and `-o` arguments as shown in the **Usage** section.
 
-```python
-br_file_name = "vendor.new.dat.br"
-transfer_list_name = "vendor.transfer.list"
-output_img_name = "vendor.img"
-```
+---
 
 ## 🙏 Credits
 
 * Based on [xpirt’s original sdat2img](https://gist.github.com/xpirt/2c11438a0f9077227d8905391c49926d)
-* Modified for Brotli compatibility and easier usage
+* Modified for Brotli compatibility and enhanced usability with CLI arguments
+
+---
 
 ## 📄 License
 
 This script is open-source and released under the MIT License. Use it freely and feel free to contribute!
+
+---
