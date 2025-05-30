@@ -2,6 +2,7 @@ import brotli
 import os
 import sys
 import errno
+import argparse
 
 # --- Core logic of original sdat2img.py adapted into a single function ---
 # Source: https://gist.github.com/xpirt/2c11438a0f9077227d8905391c49926d
@@ -27,7 +28,7 @@ def run_sdat2img_logic(transfer_list_file, new_dat_file, output_image_file):
     def parse_transfer_list_file(path):
         try:
             with open(path, 'r') as trans_list:
-                version = int(trans_list.readline())
+                version = int(trans_list.readline()) # Reads version, but it's not used for printing anymore
                 new_blocks = int(trans_list.readline())
 
                 if version >= 2:
@@ -58,13 +59,7 @@ def run_sdat2img_logic(transfer_list_file, new_dat_file, output_image_file):
     if commands is None:
         return False
 
-    version_names = {
-        1: "Android Lollipop 5.0",
-        2: "Android Lollipop 5.1",
-        3: "Android Marshmallow 6.x",
-        4: "Android Nougat 7.x / Oreo 8.x"
-    }
-    print(f"sdat2img module: Detected {version_names.get(version, 'Unknown Android version')}")
+    # The version detection and printing lines were removed as requested.
 
     try:
         output_img = open(output_image_file, 'wb')
@@ -118,33 +113,42 @@ def run_sdat2img_logic(transfer_list_file, new_dat_file, output_image_file):
     return True
 
 
-def convert_rom_files():
+def convert_rom_files(br_file_name, transfer_list_name, output_img_name):
     """
     Main function:
     1. Decompress .dat.br to .dat using Brotli.
     2. Convert .dat and .transfer.list to .img using sdat2img logic.
-    Files must be in the same directory as the script.
+    Files must be in the same directory as the script, or paths provided.
     """
     
-    br_file_name = "system.new.dat.br"
-    transfer_list_name = "system.transfer.list"
-    output_img_name = "system.img"
-    
-    print(f"🚀 ROM Extractor v1.1 Starting 🚀")
+    print(f"🚀 ROM Extractor v1.4 Starting 🚀") # Updated version number!
     print("----------------------------------------")
     print(f"Processing files: '{br_file_name}' and '{transfer_list_name}'")
     print(f"Output image will be: '{output_img_name}'")
     print("----------------------------------------")
 
     if not os.path.exists(br_file_name):
-        print(f"Error: '{br_file_name}' not found. Please place it in the same folder as this script.")
+        print(f"Error: '{br_file_name}' not found. Please ensure the path is correct.")
         return False
 
     if not os.path.exists(transfer_list_name):
-        print(f"Error: '{transfer_list_name}' not found.")
+        print(f"Error: '{transfer_list_name}' not found. Please ensure the path is correct.")
         return False
 
     dat_file_path = br_file_name.replace(".br", "")
+    # Ensure the .dat file path is correctly formed, ideally in the same directory as the .dat.br.
+    # For simplicity, we assume .dat.br is the full input path and .dat will be generated in the same directory.
+    if not dat_file_path.endswith(".dat"):
+        base, ext = os.path.splitext(br_file_name)
+        if ext == ".br":
+            dat_file_path = base # Remove .br
+            if not dat_file_path.endswith(".dat"): # Ensure it ends with .dat
+                dat_file_path += ".dat"
+        else:
+            # If not .br, it might already be .dat or another extension, simply append .dat suffix
+            dat_file_path = br_file_name + ".dat"
+
+
     print(f"\nStep 1/2: Decompressing '{br_file_name}' to '{dat_file_path}'...")
     try:
         with open(br_file_name, 'rb') as f_in:
@@ -171,32 +175,67 @@ def convert_rom_files():
             print(f"\nCleaning up temporary file '{dat_file_path}'...")
             os.remove(dat_file_path)
             print("✅ Cleanup done.")
-        
+            
     return success
 
 
 if __name__ == "__main__":
     
     if sys.version_info < (3, 6):
-        print("This script requires Python 3.6 or newer.")
+        print("This script requires Python 3.6 or newer. (ಥ﹏ಥ)")
         print(f"You are using Python {sys.version_info.major}.{sys.version_info.minor}.")
         input('Press Enter to exit...')
         sys.exit(1)
 
-    if len(sys.argv) > 1:
-        print("Warning: This script is self-contained and does not accept command-line arguments.")
-        print("To process other partitions (like product/vendor), modify the filenames in the script.")
-        input('Press Enter to exit...')
-        sys.exit(1)
+    # Set up command-line argument parser
+    parser = argparse.ArgumentParser(
+        description='✨ ROM Extractor: Decompresses .dat.br and converts to .img file. ✨',
+        formatter_class=argparse.RawTextHelpFormatter # Preserve description formatting
+    )
+    
+    parser.add_argument(
+        '-d', '--datbr', 
+        type=str, 
+        default="system.new.dat.br",
+        help='Specifies the path to the .dat.br file.\n'
+             'Example: -d "C:\\roms\\my_system.new.dat.br"\n'
+             'Default: system.new.dat.br'
+    )
+    parser.add_argument(
+        '-t', '--transferlist', 
+        type=str, 
+        default="system.transfer.list",
+        help='Specifies the path to the .transfer.list file.\n'
+             'Example: -t "C:\\roms\\my_system.transfer.list"\n'
+             'Default: system.transfer.list'
+    )
+    parser.add_argument(
+        '-o', '--outputimg', 
+        type=str, 
+        default="system.img",
+        help='Specifies the name and path for the output .img file.\n'
+             'Example: -o "extracted_system.img"\n'
+             'Default: system.img'
+    )
 
-    overall_success = convert_rom_files()
+    args = parser.parse_args()
+
+    # Display the parameters being used
+    print("\n----------------------------------------")
+    print("🚀 Command-line arguments set:")
+    print(f"  .dat.br file: {args.datbr}")
+    print(f"  .transfer.list file: {args.transferlist}")
+    print(f"  Output .img file: {args.outputimg}")
+    print("----------------------------------------\n")
+
+    overall_success = convert_rom_files(args.datbr, args.transferlist, args.outputimg)
 
     print("\n----------------------------------------")
     if overall_success:
-        print("🎉 Conversion completed successfully!")
+        print("🎉 Conversion completed successfully! You're amazing! ٩(๑•̀ω•́๑)۶")
         print("You can now use tools like DiskGenius, 7-Zip, or Linux Reader to explore the .img file.")
     else:
-        print("⚠️ Conversion failed. Please check the error messages above.")
+        print("⚠️ Conversion failed. Please check the error messages above! (╯︵╰)")
     print("----------------------------------------")
     
-    input('Press Enter to exit...')
+    input('Press Enter to exit... (｡◕‿◕｡)')
