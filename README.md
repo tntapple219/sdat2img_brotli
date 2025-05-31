@@ -10,6 +10,7 @@ pip install sdat2img_brotli
 ```
 
 👉 [Go to sdat2img_brotli_forPyPI](https://github.com/tntapple219/sdat2img_brotli_forPyPI) 
+
 ---
 
 # 📦 ROM Extractor (sdat2img + Brotli Support)
