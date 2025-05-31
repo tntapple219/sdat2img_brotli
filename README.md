@@ -1,3 +1,17 @@
+# ⚠️ Recommended: Use the PyPI Version Instead! 🚀
+
+> For easier installation and faster updates, we **highly recommend** using the [PyPI-ready version of this project](https://github.com/tntapple219/sdat2img_brotli_forPyPI)!  
+> This repository may receive updates **slightly later**, so please consider switching to the PyPI version for the latest features and improvements. 🙌
+
+## 📦 Quick Installation
+
+```bash
+pip install sdat2img_brotli
+```
+
+👉 [Go to sdat2img_brotli_forPyPI](https://github.com/tntapple219/sdat2img_brotli_forPyPI) 
+---
+
 # 📦 ROM Extractor (sdat2img + Brotli Support)
 
 This Python script extracts and converts Android OTA update files—specifically `.dat.br` and `.transfer.list`—into a usable `.img` disk image. This is especially useful for unpacking `system`, `vendor`, or `product` partitions from A/B OTA packages.
