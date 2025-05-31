@@ -103,7 +103,7 @@ With the addition of command-line arguments, you no longer need to modify the sc
 
 ## 🙏 Credits
 
-* Based on [xpirt’s original sdat2img](https://github.com/xpirt/sdat2img)
+* 🔗 Based on [xpirt’s original sdat2img](https://github.com/xpirt/sdat2img), which is licensed under the MIT License
 * Modified for Brotli compatibility and enhanced usability with CLI arguments
 
 ---
