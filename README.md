@@ -103,8 +103,9 @@ With the addition of command-line arguments, you no longer need to modify the sc
 
 ## 🙏 Credits
 
-* 🔗 Based on [xpirt’s original sdat2img](https://github.com/xpirt/sdat2img), which is licensed under the MIT License
-* Modified for Brotli compatibility and enhanced usability with CLI arguments
+🔗 Based on [xpirt’s original sdat2img](https://github.com/xpirt/sdat2img), which is licensed under the MIT License.  
+🔧 Modified to support Brotli-compressed `.dat.br` files and enhanced with command-line arguments for better usability.  
+📦 Brotli support is powered by the [Google Brotli library](https://github.com/google/brotli), also licensed under the MIT License.
 
 ---
 
